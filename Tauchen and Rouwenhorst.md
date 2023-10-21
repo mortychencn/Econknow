@@ -49,3 +49,33 @@ The closer $\rho$ is to 1, the more persistent the process is, meaning shocks wi
 
 - **For Rouwenhorst Method**: **If you have a highly persistent process ($\rho$ closer to 1), the Rouwenhorst method is generally more accurate, as it does a better job of capturing the long-lasting impact of shocks on the state variable.**
 
+The MATLAB code of the Tauchen method for approximating a continuous-state Markov process with a discrete-state Markov chain. This is often used in macroeconomic models to approximate stochastic processes like productivity shocks. Here's a breakdown of the code:
+
+### Input Parameters
+- `N`: The size of the discrete grid.
+- `rho`: The persistence parameter of the AR(1) process.
+- `sigma_z`: The standard deviation of the shock term in the AR(1) process.
+
+### Variables
+- `m`: A constant set to 3, often used to determine the range of the grid.
+- `lnzN` and `lnz1`: The upper and lower bounds of the natural logarithm of the grid.
+- `lnZ`: The grid in the log space.
+- `d`: The distance between grid points in log space.
+- `Z`: The grid in the original space (exponential of `lnZ`).
+- `PI`: The transition probability matrix.
+
+### Code Explanation
+
+1. **Setting up the Grid**
+    - `lnzN` and `lnz1` are calculated to set the range of the grid in log space.
+    - `lnZ` is a vector of `N` equally spaced points between `lnz1` and `lnzN`.
+    - `d` is the distance between these points.
+    - `Z` is the exponential of `lnZ`, transforming the grid back to the original space.
+
+2. **Creating the Transition Matrix (PI)**
+    - A nested loop iterates through each element `(i, j)` of the `N x N` matrix `PI`.
+    - For each pair `(i, j)`, the code calculates the transition probability from state `i` to state `j` using the cumulative distribution function (CDF) of the standard normal distribution.
+    - Special cases are handled for the first and last elements in the grid (`j==1` and `j==N`).
+
+The transition matrix `PI` and the state grid `Z` are returned as outputs.
+
