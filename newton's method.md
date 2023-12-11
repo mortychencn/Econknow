@@ -1,39 +1,75 @@
-# Understanding Inflation
+# Newton's Method for Solving Systems of Two Equations
 
-Inflation is a critical concept in macroeconomics, representing the rate at which the overall level of prices for goods and services is increasing, leading to a corresponding decrease in the purchasing power of money.
+Newton's Method is a numerical technique used for finding roots of equations and can be extended to systems of equations. This note explains how to apply Newton's Method to a system of two equations.
 
-## Key Aspects of Inflation
+## System of Equations
 
-1. **Measurement Methods**
-   - The Consumer Price Index (CPI) and the Producer Price Index (PPI) are common measures of inflation. The CPI reflects price changes from the consumer's perspective, while the PPI represents changes from the producer's viewpoint.
+Consider two functions \( f(x, y) \) and \( g(x, y) \) representing our system:
 
-2. **Primary Causes**
-   - **Demand-Pull Inflation**: Occurs when aggregate demand surpasses aggregate supply, causing prices to rise.
-   - **Cost-Push Inflation**: Results from increased production costs, such as labor or materials, leading to reduced supply and higher prices.
-   - **Monetary Inflation**: Arises from an expanded money supply, typically influenced by central banks and governmental policies.
+1. \( f(x, y) = 0 \)
+2. \( g(x, y) = 0 \)
 
-3. **Impacts of Inflation**
-   - **Reduction in Purchasing Power**: The value of currency diminishes as inflation increases.
-   - **Income and Wealth Redistribution**: Inflation can unevenly redistribute wealth and income across different societal groups.
-   - **Investment and Economic Growth**: High inflation rates can lead to uncertainty, adversely affecting investment and economic growth.
+The goal is to find \( (x, y) \) that satisfy both equations.
 
-4. **Management and Policy**
-   - Central banks, like the Federal Reserve, employ monetary policies, such as adjusting interest rates and managing money supply, to regulate inflation.
+## Newton's Method
 
-5. **Extreme Cases: Hyperinflation**
-   - Hyperinflation refers to rapid, uncontrollable price increases, often leading to the collapse of the monetary system.
+This method uses iteration. Starting from an initial guess \( (x_0, y_0) \), it finds a sequence of points \( (x_n, y_n) \) converging to the solution.
 
-## Mathematical Perspective
+### Iterative Formula
 
-The Fisher Equation offers a mathematical view of inflation, linking real and nominal interest rates. It is expressed as:
+For a current approximation \( (x_n, y_n) \), the next approximation \( (x_{n+1}, y_{n+1}) \) is:
 
-\[ i = r + π \]
+\[ \begin{bmatrix} x_{n+1} \\ y_{n+1} \end{bmatrix} = \begin{bmatrix} x_n \\ y_n \end{bmatrix} - J^{-1}(x_n, y_n) \cdot \begin{bmatrix} f(x_n, y_n) \\ g(x_n, y_n) \end{bmatrix} \]
 
-Where:
-- `i` is the nominal interest rate.
-- `r` is the real interest rate.
-- `π` is the inflation rate.
+Here, \( J^{-1}(x_n, y_n) \) is the inverse of the Jacobian matrix at \( (x_n, y_n) \).
 
-This equation highlights the impact of inflation on investments and savings.
+### Jacobian Matrix
 
-In summary, inflation is a fundamental economic indicator, influencing various policy decisions and economic activities. Its monitoring and understanding are crucial for effective economic management.
+The Jacobian matrix \( J \) is:
+
+\[ J = \begin{bmatrix} \frac{\partial f}{\partial x} & \frac{\partial f}{\partial y} \\ \frac{\partial g}{\partial x} & \frac{\partial g}{\partial y} \end{bmatrix} \]
+
+### Example
+
+Consider:
+
+1. \( f(x, y) = x^2 + y^2 - 4 \)
+2. \( g(x, y) = xy - 1 \)
+
+Jacobian matrix:
+
+$$
+J = \left[ \begin{array}{cc}
+2x & 2y \\
+y & x 
+\end{array} \right]
+$$
+
+
+\[ J = \begin{bmatrix} 2x & 2y \\ y & x \end{bmatrix} \]
+
+### Iteration Steps
+
+1. Start with \( (x_0, y_0) \).
+2. Calculate \( J \) and \( J^{-1} \) at \( (x_n, y_n) \).
+3. Compute \( (x_{n+1}, y_{n+1}) \).
+4. Repeat until convergence.
+
+## MATLAB Implementation
+
+```matlab
+function [x, y] = newtonsMethod2Eq(f, g, dfdx, dfdy, dgdx, dgdy, x0, y0, tol, maxIter)
+    x = x0;
+    y = y0;
+    for i = 1:maxIter
+        J = [dfdx(x, y) dfdy(x, y); dgdx(x, y) dgdy(x, y)];
+        F = [f(x, y); g(x, y)];
+        step = J \ (-F);
+        x = x + step(1);
+        y = y + step(2);
+        
+        if norm(step) < tol
+            break;
+        end
+    end
+end
